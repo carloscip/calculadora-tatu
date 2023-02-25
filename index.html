@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora TATU</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="file_handler.js"></script>
+    <!-- <script type="text/javascript" src="calculadora.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"
+        integrity="sha512-+BMamP0e7wn39JGL8nKAZ3yAQT2dL5oaXWr4ZYlTGkKOaoXM/Yj7c4oy50Ngz5yoUutAG17flueD4F6QpTlPng=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.19.2/package/dist/xlsx.full.min.js"></script>
+    <style>
+        .container {
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 1rem;
+        }
+
+        .column-1 {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            padding: 1rem;
+        }
+
+        input[type="number"] {
+            border: none;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            background: #20b8be;
+        }
+
+        input[type="text"] {
+            border: none;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            background: #20b8be;
+        }
+
+        .button {
+            cursor: pointer;
+            float: left;
+            margin: 0 5px 0 0;
+            width: 100%;
+            height: 2rem;
+            position: relative;
+            font-size: 1rem;
+            text-align: center;
+            border-style: solid;
+            margin: 2px;
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Old versions of Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome, Edge, Opera and Firefox */
+        }
+
+        .button label,
+        .button input {
+            cursor: pointer;
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .button input[type="radio"] {
+            opacity: 0.011;
+            z-index: 100;
+        }
+
+        .button input[type="radio"]:checked+label {
+            background: #20b8be;
+            border-radius: 4px;
+        }
+
+        .button input[type="checkbox"] {
+            opacity: 0.011;
+            z-index: 100;
+        }
+
+        .button input[type="checkbox"]:checked+label {
+            background: #20be62;
+            border-radius: 4px;
+        }
+
+        .button label {
+            z-index: 90;
+            line-height: 1.8em;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="column">
+            <div class="button" id="catalogosSectionToggle" style="font-size: 1.5rem; font-weight: bold;">Cargar Catalogos</div>
+        </div>
+    </div>
+
+    <span id="catalogosSection" style="display: none;">
+    </span>
+
+    <hr>
+
+    <div class="container">
+        <div class="column">
+            <div class="button">
+                <input type="text" id="codigo" placeholder="Codigo" style="background-color: transparent">
+            </div>
+        </div>
+        <div class="column">
+            <div class="button" id="query" style="font-weight: bold; background-color: rgb(212, 209, 0);">
+                <label>Buscar</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="column-1">
+            <table id="resultados-table" style="display: none;">
+                <thead>
+                    <th>Codigo</th>
+                    <th>Descripcion</th>
+                    <th>Costo</th>
+                </thead>
+                <tbody id="resultados"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="container">
+        <div class="column cfirst">
+            <h1>Monto</h1>
+            <div class="button">
+                <input min="0" type="number" id="monto" placeholder="Monto" style="background-color: transparent">
+            </div>
+        </div>
+        <div class="column csecond">
+            <h1>Descuentos</h1>
+
+            <div class="button">
+                <input type="radio" name="group1" id="radio1" value="13">
+                <label for="radio1">- 13%</label>
+            </div>
+
+            <div class="button">
+                <input type="radio" name="group1" id="radio2" value="20">
+                <label for="radio2">- 20%</label>
+            </div>
+
+            <div class="button">
+                <input type="radio" name="group1" id="radio3" value="30">
+                <label for="radio3">- 30%</label>
+            </div>
+
+            <div class="button">
+                <input min="0" type="number" placeholder="Descuento (%)">
+            </div>
+        </div>
+        <div class="column cthird">
+            <h1>Recargos</h1>
+
+            <div class="button">
+                <input type="checkbox" id="iva">
+                <label for="iva">+ IVA COMPRA (21%)</label>
+            </div>
+
+            <div class="button">
+                <input type="radio" name="group2" id="radio5" value="45">
+                <label for="radio5">+ 45%</label>
+            </div>
+
+            <div class="button">
+                <input type="radio" name="group2" id="radio4" value="55" checked>
+                <label for="radio4">+ 55%</label>
+            </div>
+
+            <div class="button">
+                <input type="radio" name="group2" id="radio6" value="65">
+                <label for="radio6">+ 65%</label>
+            </div>
+
+            <div class="button">
+                <input type="radio" name="group2" id="radio7" value="100">
+                <label for="radio6">+ 100%</label>
+            </div>
+
+            <div class="button">
+                <input min="0" type="number" placeholder="Recargo (%)">
+            </div>
+        </div>
+    </div>
+
+    <input type="number" style="display: none;" id="recargos"></input>
+    <input type="number" style="display: none;" id="descuentos"></input>
+
+    <hr>
+    <div class="container">
+        <div class="column">
+            <h1>Total</h1>
+            <h1 id="total"></h1>
+        </div>
+    </div>
+    <hr>
+</body>
+
+</html>
